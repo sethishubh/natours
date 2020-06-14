@@ -45,7 +45,7 @@ const createSendToken = (user, statusCode, res) => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    cookieOptions.secure = true;
+    cookieOptions.secure = true; //ie cookie will only be sent on an encrypted/https connection
   }
   res.cookie('jwt', token, cookieOptions); //Sending cookie in response
   //res.cookie('Name of cookie', 'Data we want to send in the cookie', {options}); expires -> browser will delete the cookie after it has expired
