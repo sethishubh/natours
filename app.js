@@ -10,6 +10,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 //Below-> in order to actually get access to the cookies that are in a request(made using browser or API), In Express, we need to install a certain middleware/NPMpackage called cookie-parser from npm. So do -> npm i cookie-parser    in terminal . So basically, this package will then parse all the cookies from the incoming request.
 const cookieParser = require('cookie-parser'); //And we use this cookie parser below
+const compression = require('compression'); //npm i compression; for deployment
 
 const AppError = require('./utilities/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -113,6 +114,8 @@ app.use(
   })
 );
 
+app.use(compression()); //For deployment; it will return a middleware f'n vch will compress all d TEXT dat is sent 2 clients as response.
+
 //TEST MIDDLEWARE
 //Global middleware ie executed for every req
 //MIDDLEWARES BELOW IS CALLED/RUN/EXECUTED ONLY WHEN THERE IS a Request/Response (req, res)
@@ -123,7 +126,7 @@ app.use((req, res, next) => {
   //Accessing req headers above in consoleLog ie http headers that client can send along with their request
   //Below using request.cookies. And so now for each incoming request, we will always display all the cookies(that come with requests from browser) in the console.
 
-  console.log(req.cookies); // O/p in VSCodeTerminal -> { ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' }<- this is cookie and <-this code appears in VSCodeTerminal/console after we log-in on login webpage by entering correct email and p/w details into login-form and after successful login, we reload that login webpage or load any other webpage/page after successful login and so by doing this, we will see this o/p in terminal -> O/p in VSCodeTerminal/ConsoleInTerminal -> { ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' } and after successful login, the browser stores the cookie(vch has jwt also) for that user who successfully logged-in just now and the browser will then send this cookie(vch also has jwt) along with every subsequent requests(to show jwt as passport) to the API for that logged-in user
+  //console.log(req.cookies); // O/p in VSCodeTerminal -> { ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' }<- this is cookie and <-this code appears in VSCodeTerminal/console after we log-in on login webpage by entering correct email and p/w details into login-form and after successful login, we reload that login webpage or load any other webpage/page after successful login and so by doing this, we will see this o/p in terminal -> O/p in VSCodeTerminal/ConsoleInTerminal -> { ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' } and after successful login, the browser stores the cookie(vch has jwt also) for that user who successfully logged-in just now and the browser will then send this cookie(vch also has jwt) along with every subsequent requests(to show jwt as passport) to the API for that logged-in user
   //..contd and So this(in console's code ->{ ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' } ) is the cookie that was just sent with the req by the browser(for the logged-in user) on/after above mentioned comment's page load/reload And so now we can use this in order to protect our route.
   // So cookie above -> in console.log(req.cookies) = { ext_name: 'ojplmecpdpgccookcobabopnaifgidhf', jwt: 'eyJhbGciOiJIUzI1Ni...' } = cookie
   //NOW GOTO authController.js file in exports.protect f'n/middleware f'n in code there -> else if (req.cookies.jwt)...

@@ -17,7 +17,8 @@ export const login = async (email, password) => {
       //Above -> await coz axios returns a promise
       //Below are options for our API req
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/login', // endpoint(login endpoint here) for API req
+      url: '/api/v1/users/login', // endpoint(login endpoint here) for API req ; '/api/v1/users/login' = relative url for production/deployment, and since the api and the website r hosted on d same server(ie the api and d website r using d same url, so v r hosting them on d same place/url. But if u were hosting ur website/fornt-End on one url nd then ur api on another url, then it wouldn't work lyk dis), dis relative url is gonna work completely fine
+      //url: 'http://127.0.0.1:3000/api/v1/users/login', // endpoint(login endpoint here) for API req ; 'http://127.0.0.1:3000/api/v1/users/login' = development API
       //Below is the data that we're sending along with the request in the body(like in the postman body in a POST req)
       data: {
         email: email, // LHS 'email': coz our login endpoint/API expects our body data to be called as -> {"email":"max@example.com", "password": 12345} in the body of postman in login endpoint and LHS email ->is a property ; RHS email is the parameter/argument of this f'n (ie in code -> 'const login = (email, password) ....' above) AND exact same case is for p/w defined below
@@ -49,7 +50,8 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout',
+      url: '/api/v1/users/logout',
+      //url: 'http://127.0.0.1:3000/api/v1/users/logout',
     });
 
     //And then as the next step, let's also reload the page. So that's what we always do manually when we delete a cookie in the browser, right? And so here of course we need to do it programatically. And we need to do it here because since this is an Ajax(ie HTTP req to API's url('/logout' here above in axios)) request we can not do it on the back-end side. So we can't do it with express. And so we need to, of course, do it manually here below. Otherwise we would technically be logged out(in the browser) but our user menu would still reflect in the browser. so it would still show that we/user are logged in. And so of course, we simply need to reload the page which would then send the invalid cookie basically to the server, so that one that we just received without a token and then we are no longer logged in, and therefore then our user menu will disappear, okay? So let's do that if() there was a success.Below

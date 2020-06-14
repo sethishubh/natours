@@ -181,7 +181,6 @@ exports.login = catchAsync(async (req, res, next) => {
 //Contd.. And so what we're gonna do instead is to create a very simple log out route that will simply send back a new cookie with the exact same name but without the token(jwt). And so that will then override the current cookie that we have in the browser with one that has the same name but no token(jwt). And so when that cookie is then sent along with the next request, then we will not be able to identify the user as being logged in. And so this will effectively then log out the user. And also were gonna give this cookie a very short expiration time. And so this will effectively be a little bit like deleting the cookie but with a very clever workaround like this, okay? So let's do that here below, right after above's log-in f'n here below -
 //Contd.. So again when we're doing token(jwt) based authentication we usually never need an end point like this(ie like defined below) but when we want to send a super secure cookie like we do(ie httpOnly: true in authController.createSendToken vch is a super secure way ) well, then we have to do it like this below-
 exports.logout = (req, res) => {
-  console.log('biugiu');
   //Below-> res -> response ; loggedout -> dummy/random text
   //Below-> So, again, on the response we set the cookie, and the secret is to give it the exact same name('vch is 'jwt' here' ie in -> exports.createSendToken -> res.cookie('jwt', token, cookieOptions); ) and that is jwt. So just as I mentioned in above/before comments.
   res.cookie('jwt', 'loggedout', {

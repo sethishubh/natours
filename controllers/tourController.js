@@ -44,7 +44,7 @@ exports.uploadTourImages = upload.fields([
 //AND upload.array('images', 3) will produce req.files -> REQ.FILE'S' coz here mutiple files/images upload at d same tym
 
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  console.log(req.files);
+  //console.log(req.files);
   //req.file's' -> FOR UPLOADED FILE'S'/IMAGE'S'
 
   //Below if coz, in case there are no images/files uploaded(ie if(!req.files) ) then we want to move/go straight to the next middleware
@@ -448,7 +448,7 @@ exports.getAllTours = factory.getAll(Tour); //Tour = Model name
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
   //Below are aggregation stages and are array of objects run in sequence one by one
-  console.log(process.env.NODE_ENV);
+  //console.log(process.env.NODE_ENV);
   const stats = await Tour.aggregate([
     {
       $match: { ratingsAverage: { $gte: 4.5 } },
