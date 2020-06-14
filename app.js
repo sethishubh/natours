@@ -21,6 +21,7 @@ const bookingRouter = require('./routes/bookingRoutes');
 
 const viewRouter = require('./routes/viewRoutes');
 
+//Start express app
 const app = express();
 
 app.set('view engine', 'pug'); //Setting template engine to pug for building/rendering website
