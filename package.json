@@ -4,7 +4,8 @@
   "description": "Learning nodejs",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env nodemon server.js",
+    "start": "node server.js",
+    "dev": "cross-env nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug": "cross-env ndb server.js",
     "watch:js": "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js --out-file bundle.js",
