@@ -1,0 +1,77 @@
+//- we here(in this file below) put content for this specific page ONLY and we will have no header, no footer and none of the content that we have in base template (ie in base.pug)
+//-contd.. So we here(in this file below) put content for this specific page only ie for this overview page only
+//- contd.. And then we will then inject this template into the base.pug(ie base template) 
+//- contd.. so then the base.pug will be PARENT TEMPLATE Of this overview template.
+//-contd.. And this process is called EXTENDING
+//- contd.. So whenever the overview template is rendered, we then take the base template and fill it up with the content of this file and so we EXTEND it
+//- contd..  And now in this process- we first go to base.pug and then put a <block> tag there(ie in base.pug -> 'block content')(coz we want to extend the base.pug file here below(ie COPY/KindOfInclude the content(header,footer,head etc) of/FROM the base.pug file here) below)
+//- contd.. So all the content(All the CONTENT That is NOT(ie excluding) the "block content" there ) that is in the parent(base.pug) file like header, footer, head (BUT NOT the 'specific page conntent'->'which is in 'block content' there' coz specific page content is defined in this file) etc WILL BE 'KIND OF COPIED' FROM THERE/Base.pug to here below(ie into this file below where we use extends base) 
+//- contd.. And now after writing <block> tag there(ie in base.pug -> 'block content') we come back below and extend that base template here below
+//- contd.. And the content that is gonna be extended in the base.pug(baseTemplate) is -whatever we put in the content block below (ie in - block content below)
+//- contd.. So here we below basically redefined the content block that is in the base.pug(ie in base.pug -> 'block content') 
+//- contd.. And we will do the same thing for tour.pug
+extends base
+
+block content
+    //-h1 This is the tour overview
+
+    main.main
+        .card-container
+            //-Below is Entire code for one (1) Card translated to .pug code
+            //- And we want to have 'one card' for 'each of the tours' in overview webPage/pugTemplate
+            //-contd.. So we will have to basically loop through that 'tours' array that we passed into this overview.pug template as 'tours' variable/local in viewsController.getOverview in res.status.render(...)...
+            //-contd.. And so below, basically loop over 'tours' array and create one card for each of the tour docs
+            //-Below is pug array that starts with each
+            each tour in tours 
+                //-Above-> tours = variable that we passed in ;And In each loop iteration the current variable will be called 'tour'(or x,y,z,el or whatever u like to call it) 
+                .card
+                    .card__header
+                        .card__picture
+                            .card__picture-overlay &nbsp;
+                            //- Below -> tour-> in tour.imageCover and tour.name, is the 'name of the variable in current loop iteration' defined above (ie in -> each 'tour' in tours ) and that is 'tour' doc (came from looping over "tours" array/collection by running this code above -> each tour in tours) in db/InToursCollectionInMongoCompass and tour.imageCover is name of the property of tour doc in db for specifying tour's coverImage
+                            //- Below 'alt=' in img.card__picture-img  expects a string to come in here as code after 'alt=' thats y we can't use tour.name directly here/below after alt= and So we used ES6 template string below/after alt=  
+                            img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+                        h3.heading-tertirary
+                            //-Below is the name of the tour in/from db for "each of the tours in above's 'tours' array (ie in -> 'each tour in tours' code defined above )
+                            //- tour-> name of the variable in current loop iteration above and that is 'tour' doc in db/InToursCollectionInMongoCompass and tour.name is name of the tour doc in db
+                            span= tour.name
+
+                    .card__details
+                        h4.card__sub-heading= `${tour.difficulty} ${tour.duration}-day tour`
+                        p.card__text= tour.summary
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-map-pin')
+                            span= tour.startLocation.description
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-calendar')
+                            //- Below is-> the date on which the next tour starts, startDates = array and so startDates[0] = first element of startDates array
+                            //- Here-> toLocaleString()-> to convert Date in startDates[0] to a nice readable date/string; en-us -> language->english for us here ; month: long -> ie full name of month like January and NOT just Jan 
+                            span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'}) 
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-flag')
+                            //- Below is -> How many stops/locations there are in a tour, And so counting length of tours.locations array coz locations in tours Collection in db is an array
+                            span= `${tour.locations.length} stops`
+                        .card__data
+                            svg.card__icon
+                                use(xlink:href='/img/icons.svg#icon-user')
+                            //- Below is -> ppl that can participate in one tour
+                            span= `${tour.maxGroupSize} people`
+
+                    .card__footer
+                        p
+                            span.card__footer-value= `$${tour.price}`
+                            //- Below -> |<space> ie (pipe<space>) -> whenever we need a real space b/w two inline-block elements (above's and below's span here in this case) then we need to manually create that space using piped line with |
+                            //- contd.. and whatever content is in the piped line (ie after |) below, is basically outside of the above's and below's element/line 
+                            | 
+                            span.card__footer-text per person
+                        p.card__ratings
+                            span.card__footer-value= tour.ratingsAverage
+                            | 
+                            span.card__footer-text= `rating (${tour.ratingsQuantity})`
+                        //- Below is the url to the tour detail page (ie url to the page showing details of the specific tour and the specific tour detail webpage/page will be shown when we click on one of the tour cards of all the tours defined above)
+                        //- Querying the tours in browser's url by their(tours') slugs/SlugNames and NOT by their Id like we did in API, to make url look much nicer
+                        a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Details
+                        //- Above we start url with slash tours (ie /tours) and it is called RELATIVE URL and so now '/tours/${tour.slug}' url will be added after the Host name (and host name is 127.0.0.1 here) 

@@ -1,0 +1,41 @@
+//- We use . (ie dot) for attaching class name ie below .header = header class, .nav = nav class, .nav--tours = nav--tours class etc..
+header.header
+    nav.nav.nav--tours
+        //-Below '/' -> root page/Home page
+        a.nav__el(href='/') All tours
+    .header__logo
+        img(src='/img/logo-white.png' alt='Natours logo')
+    nav.nav.nav--user
+        //-Below testing if a variable called 'user(vch is currently logged-in user from res.locals.user = currentUser; from authController.isLoggedIn )' does exist or not 
+        if user
+            //- These below commented 4 commented codes are gonna be available only when someone/user is logged-in
+            a.nav__el.nav__el--logout Log out
+            a.nav__el(href='/me')
+                //- Below-> src=`/img/users/${user....}` is basically path from starter/public folder in our file directory
+                img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+                //-Below Displaying only 1st name of the logged-in user by splitting the 'user.name (vch is a string)' using spaces and then only display the 1st element of the resulting array 
+                span= user.name.split(' ')[0]
+        else
+        a.nav__el(href= '/login') Log in
+        a.nav__el.nav__el--cta(href='#') Sign up
+
+//- //- We use . (ie dot) for attaching class name ie below .header = header class, .nav = nav class, .nav--tours = nav--tours class etc..
+//- header.header
+//-     //-Above is same as- <header class="header"> in html
+//-     nav.nav.nav--tours
+//-         //- Above is same as- <nav class="nav nav--tours"> in html
+//-         //- Below - we use () ie parenthesis ALWAYS to define attributes(href below here) in pug, So whenever there is an attribute in html then we ALWAYS need to use "()" to define/convert that attribute to/in pug 
+//-         a.nav__el(href='#') All tours
+//-      //- div = standard block element in html so we dont need to say div.header__logo below, we just need to define class here below in pug with dot (ie '.') and then that dot(ie '.') will automatically create a div element below in pug
+//-      //- Below is same as -> div.header__logo in pug
+//-     .header__logo
+//-         img(src='img/logo-white.png' alt='Natours logo')
+//-     nav.nav.nav--user
+//-         //- These below commented 4 commented codes are gonna be available only when someone is logged-in
+//-         //- a.nav_el(href='#') My bookings
+//-         //- a.nav_el(href='#')
+//-         //-     img.nav__user-img(src='img/user.jpg' alt='User photo')
+//-         //-     span Sethi
+//-         button.nav__el Log in
+//-         button.nav__el.nav__el--cta Sign up
+//- With extends we will be able to use the same base layout for every single page that we want to render

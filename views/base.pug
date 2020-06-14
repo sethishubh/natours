@@ -1,0 +1,112 @@
+//- Pug is a simple whitespace sensitive syntax for writing html
+//- There are no opening tags(ie <>) or closing tags(ie </>) like in html
+doctype html
+
+//- below is same as - <html> ; In pug to say that one element/tag is inside of the other one, all we do is to use/press the tab ie whitespace of one key in keyboard (ie indentation from left)
+//- ..contd and as <head> is inside of its above's <html>, we used left indentation below. and same for <title>
+//- Below is same as- <h1> The Park Camper </h1>
+//- Below <body> is at the same level of <head> and so its indentation is also same as <head> from left But <h1> is inside <body> so we used tab in keyboard in left for <h1>
+
+html
+
+    head
+        //-Creating a new block here below called 'head' that is gonna extend from the tour.pug file
+        block head
+    
+            //- Creating Base template (ie this base.pug Pug template) below from overview.html file located at - C:\Users\hp\Desktop\Natours\starter\public\overview.html - It is the template upon which all other templates will be based on
+            //- ..contd So we will convert a 'regular html file(overview.html here) that is in the starter files' to a 'Pug template'. So we will create layout(now header and footer only) of the page (which is overview.html in html) on https://www.natours.dev (ie of page having All Tours) 
+
+
+
+            //- <meta charset="UTF-8" />
+            //- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> Below
+            meta(charset='UTF-8')
+            meta(name='viewport' content='width=device-width, initial-scale=1.0')
+            link(rel='stylesheet' href='/css/style.css')
+            //-favicon below
+            link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+            //- Each of the assets ie style.css and favicon.png triggers its own http req and its a GET req to urls- css/style.css and url- img/favicon.png and coz these are static assets so these are served by Static middleware defined in app.js
+            link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+            title Natours | #{title}
+            //- above is- interpolation -> #{..}) ; title-> variable/local from routes in app.js coz title = 'All Tours' in /overview url/route and title = 'The Forest Hiker Tour' in /tour url/route 
+
+    //- head
+    //-     //- Below #{tour} -> interpolation syntax and tour is variable/local from route in app.js
+    //-     title Natours | #{tour}
+    //-     //- below is same as <link rel="stylesheet" href="css/style.css" />  ;And we can also use regular/normal html in pug; rel='stylesheet' and href='css/style.css' = Attributes
+    //-     link(rel='stylesheet' href='css/style.css')
+    //-     //-favicon below
+    //-     link(rel='icon' type='image/png' href='img/favicon.png')
+    //-     //- Each of the assets ie style.css and favicon.png triggers its own http req and its a GET req to urls- css/style.css and url- img/favicon.png and coz these are static assets so these are served by Static middleware defined in app.js
+        
+
+    body
+
+        // HEADER
+
+        include _header
+
+
+
+        // CONTENT
+
+        //- section.overview
+        //-     //- tour -> variable/local below coming from router in app.js 
+        //-     h1= tour
+        //-Below <block> tag in html
+        block content
+            h1 This is a placeholder heading
+
+
+
+        // FOOTER
+
+        include _footer
+                
+
+                
+
+
+
+
+        //- tour,user are -> variables/CalledLocalsHere below (from route in app.js)
+        //- h1= tour -> is called buffered code
+        //- Anything(for e.g. h1)=whitespace(ie <One space in keyboard>) will be treated as js code by pug template
+        //- h1= tour
+        //- //- h1 The Park Camper
+
+        //- //- Below is buffered code where we used js code (.toUpperCase()) on user variable/local
+        //- //- buffered code -> Code that is going to add something to the o/p in rendered page in browser
+        //- //- unbuffered code -> Code that is not going to add anything to the o/p in rendered page in browser
+        //- //-AND If we have buffered code then we ALSO HAVE TO HAVE unbuffered code
+        //- h2= user.toUpperCase()
+
+        //- //-Unbuffered code below
+        //- - const x = 9;
+        //- //- Buffered code below
+        //- h2= 2 * x
+
+        //- p This is just text
+        //- script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js')
+        //- //- Above code will then expose an Axios object to the global scope(ie we can use that axios object anywhere/throughout in our FileStructure/website )
+        //- script(src='/js/mapbox.js')
+        //- script(src='/js/login.js')
+        script(src='https://js.stripe.com/v3/')
+        //-just Above script will expose a stripe object to d global scope, nd so v can use this in stripe.js file
+        script(src='/js/bundle.js')
+        //-script(src='/js/bundle.js.map')
+        //-script(src='/js/bundle.js.map')
+        //-Above-> including all of the js files one by one is NOT at all a good idea and so doing like this/above is not a good practice.
+        //-Contd.. We should only have one big JavaScript file which includes ALL the JS code in it and then we can include that one big JS file(having ALL of our js code) here.
+        //-Contd.. and we usually use something called a module bundler to Bundle/pack/include all of the JS code in one big file
+        //-Contd.. And so do "npm i parcel-bundler@1 --save-dev" ; AND in package.json file(after installing it) Add there this code-> to-> "scripts" : { "watch:js" : "parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js..."} ->  ; --save-dev coz its a development tool ; @1 ->for installing version 1 of the package ; AND 
+        //-Contd.. ->" parcel watch ./starter/public/js/index.js --out-dir ./starter/public/js " -> watch ./starter/public/js/index.js -> ie specifying which folder it(script in package.json file) actually should watch, --out-dir ./starter/public/js ->ie output directory shud also be in '/starter/public/js'. AND Many times you will have different folders for the development and for the output, but in this case(ie in our project) since it's a very simple architecture we're going to put the bundle file right in the same place as the development files.; AND --out-file bundle.js -> ie specifying the output file to be as bundle.js
+        //-Contd... And now we can run this script in terminal -> "npm run watch:js" and then upon running this script in terminal , it(script) will take a look at '/starter/public/js/index.js' file(mentioned above in comment as "scripts": {....}) and see if something changes or in one of the dependencies and whenever that happens it will then bundle all of the files together again into bundle.js file.
+        //--Contd... And "scripts": { "build:js": "...."} in package.json is for production version
+        //--Contd... So WE COMMENTED ALL OF THE ABOVE INCLUDED JS FILES And Included ONLY One BIG JS file called 'bundle.js' of bundler(vch is parcel) vch has all the code of commented JS files(and their dependies too). So again, one file which will basically contain all the code that's in all the other files and all their dependencies.
+        //--Contd.. also do -> npm i @babel/polyfill@1
+
+
+        
+
+

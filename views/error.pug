@@ -1,0 +1,12 @@
+extends base
+
+block content
+  //- Above's code->  "extends base <next line> block content" means-> So basically injecting this below's content/code into the content block in the base template (ie in the base.pug file).
+
+  main.main
+    .error
+      .error__title
+        h2.heading-secondary.heading-secondary--error Uh oh! Something went wrong!   
+        h2.error__emoji 😢 🤯
+        //-Below variables come from errorController.js -> const sendErrorDev = ... -> else {res.status(err.statusCode).render('error', {...})} code
+      .error__msg= msg

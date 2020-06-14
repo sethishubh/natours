@@ -1,0 +1,118 @@
+extends base
+
+//-Below is mixin called navItem
+mixin navItem(link, text, icon, active)
+  //-active = true/false below
+  li(class=`${active ? 'side-nav--active' : ''}`)
+    a(href=`${link}`)
+      svg
+        use(xlink:href=`img/icons.svg#icon-${icon}`)
+      | #{text}
+
+block content
+
+  main.main
+    .user-view
+      nav.user-view__menu
+        ul.side-nav
+          +navItem('#', 'Settings', 'settings', true)
+          +navItem('/my-tours', 'My bookings', 'briefcase')
+          +navItem('#', 'My reviews', 'star')
+          +navItem('#', 'Billing', 'credit-card')
+          //-Above's mixin codes will produce similar code to below's commented code
+
+          
+          //- li
+          //-   a(href='#')
+          //-     svg
+          //-       use(xlink:href='img/icons.svg#icon-briefcase')
+          //-     | My bookings
+          //- li
+          //-   a(href='#')
+          //-     svg
+          //-       use(xlink:href='img/icons.svg#icon-star')
+          //-     | My reviews
+          //- li
+          //-   a(href='#')
+          //-     svg
+          //-       use(xlink:href='img/icons.svg#icon-credit-card')
+          //-     | Billing
+
+
+        - if (user.role === 'admin')
+          .admin-nav
+            h5.admin-nav__heading Admin
+            ul.side-nav
+              +navItem('#', 'Manage tours', 'map')
+              +navItem('#', 'Manage users', 'users')
+              +navItem('#', 'Manage reviews', 'star')
+              +navItem('#', 'Manage bookings', 'briefcase')
+          //-Above's mixin codes will produce similar code to below's commented code
+
+              li
+                a(href='#')
+                  svg
+                    use(xlink:href='img/icons.svg#icon-map')
+                  | Manage tours
+              li
+                a(href='#')
+                  svg
+                    use(xlink:href='img/icons.svg#icon-users')
+                  | Manage users
+              li
+                a(href='#')
+                  svg
+                    use(xlink:href='img/icons.svg#icon-star')
+                  | Manage reviews
+              li
+                a(href='#')
+                  svg
+                    use(xlink:href='img/icons.svg#icon-briefcase')
+                  | Manage bookings
+
+      .user-view__content
+        .user-view__form-container
+          h2.heading-secondary.ma-bt-md Your account settings
+          //-Let's now use the user account page in order to allow users to update their data. So what we're gonna do is to allow the user to update both the name and the email address for now in this account page(ie in this account.pug) of logged-in user. And, now there are two ways in which we can do this below. The first one is to submit a post request to our API just like we did with the login form, remember that? And actually, we're gonna do that in the next lecture. But in this one, I want to show you another way which is a more traditional normal way. So in this more traditional way, we specify the post method right on the form, along with the URL where the post request should be sent to. So basically, using this method, we don't need JavaScript for doing the request, it automatically happenswith the HTML form which will then post the data to the URL endpoint in our backend that we specified. Now personally, I don't really like this solution, because it forces a page reload, and it also requires us to create yet another route and route handler in our backend. And finally, it also makes it a bit more difficult to handle errors. However, I still believe that it's very important that you know how to work with forms in this way, because it might make more sense in the application that you're building. For example, your application might not even need an API, and so in that case, when you're only building a rendered website, then of course it doesn't make sense to submit forms using an API call, and instead, you will do it the way that we're gonna do it in this video/below first/JustBelow. Alright, and so that's why we're doing it this way in this lecture, and then using the API way in the next lecture. So, what we need to do in our form in order to submit it automatically, without having to go through JavaScript as I mentioned before, so basically automatically posting the data to our endpoint, is to specify that endpoint, and so we do that here in the form, where we specify the action attribute.And below's action code ALWAYS needs to happen on the form element that we are submitting, okay. 
+          //-Below-> '/submit-user-data' -> endpoint/route'sURL
+          //-Below-> so when we click on this button element, automatically the form will get submitted, and the data will be sent using a post request to this URL(ie below-> '/submit-user-data'), alright.
+          //-What just below's code is gonna do is to encode all the data that we're submitting via/through this form below in the URL a bit like a query string. Okay, but more on that when we are actually working on getting the data on the server and working with it. So, this here just below is the first step(ie (action='/submit-user-data' method='POST')) in making this method work, and the second one is to specify the 'name' properties on the fields(ie on the fields of below's form) that we actually want to send (vch are input fields defined in form below) and their values will be sent with a request based on their name attributes.
+          
+          //-Below-> WITHOUT API
+          //-form.form.form-user-data(action='/submit-user-data' method='POST' //also enctype='mutipart/form-data' for sending/selecting the (selected) image to the server) ; 'mult'ipart -> is for sending files to the server and we will need 'mult'er package to handle this muti-part form data
+
+          //-Below-> WITH API CALL in updateSettings.js (like with API Call in/for login functionality in login.js)
+          form.form.form-user-data
+            .form__group
+              label.form__label(for='name') Name
+              //- Below-> name='name of this field(ie field having 'name' attribute in it) and the body that our application receives'
+              input#name.form__input(type='text', value=`${user.name}`, required, name='name')
+            .form__group.ma-bt-md
+              label.form__label(for='email') Email address
+              //- Below-> name='name of this field(ie field having 'name' attribute in it) and the body that our application receives.' So below, name of this below's field(ie input field)= 'email' = name of the body that our application receives. And so right now when we submit this form, the body that we will then receive will only have the name and the email, because these are the only two fields which actually have a name attribute.
+              input#email.form__input(type='email', value=`${user.email}`, required, name='email')
+            .form__group.form__photo-upload
+              img.form__user-photo(src=`/img/users/${user.photo}`, alt='User photo')
+              //- a.btn-text(href='') Choose new photo
+              //-Below image/* means we accept images(ie mimetype: image/...) of all formats(like jpeg, png..) 
+              //-Below name='photo' coz that's the name dat v have in our user doc and its also the field name dat multer is expecting
+              input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+              label(for='photo') Choose new photo
+            .form__group.right
+              button.btn.btn--small.btn--green Save settings
+
+        .line &nbsp;
+        .user-view__form-container
+          h2.heading-secondary.ma-bt-md Password change
+          form.form.form-user-password
+            .form__group
+              label.form__label(for='password-current') Current password
+              input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
+            .form__group
+              label.form__label(for='password') New password
+              input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+            .form__group.ma-bt-lg
+              label.form__label(for='password-confirm') Confirm password
+              input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
+            .form__group.right
+              button.btn.btn--small.btn--green.btn--save-password Save password

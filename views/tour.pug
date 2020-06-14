@@ -1,0 +1,261 @@
+//- This is tour detail page for a specific tour
+
+//- Extending base layout/template/.pug here below; for detailed explanation see-> overview.pug
+extends base
+//- Including reviewCard mixin below
+include _reviewCard
+
+//- Below is another way of extending block vch will simply add the new content at the end or at the beginning of the block  
+//- contd.. And so whatever we will write in this block here below will then be appended to the content that's already in the block(ie to the content that's already in-> 'block head' Code in base.pug file(and in the 'base.pug' file coz above at the top in this file we have already extended our base template/base.pug file)) file), And we can also use prepend here below and in that case it will be added at the beginning of the block. And so with this code written below-> block append head <On Next Line> script(src='/js/mapbox.js'), we can basically inject this code-> 'script(src='/js/mapbox.js')' into the head block(ie into code-> 'block head' in base.pug) that is already in our base template/base.pug file
+//- contd.. And so below we append that and so it(ie below code-> 'script(src='/js/mapbox.js')') will then appear at the end of head block in base.pug (ie after code-> 'title Natours | #{title}'  in base.pug)
+
+block append head
+	//- Bellow-> appending '<script src='https://....' and '<link href='https://...' to the head(ie <head>)
+	//- Below's code is copied from installation steps given on mapbox website
+	//- MapBox JS Library just below
+	script(src= 'https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js')
+	link(href= 'https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet')
+	script(src='https://js.stripe.com/v3/')
+	script(src='/js/bundle.js')
+	//-Above-> And so we can use above's MapBox JS Library throughout our website and So we can use mapbox object(ie mapboxgl object) throughout our website
+	//- <script src='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js'></script>
+	//- <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+	//- script(src='/js/mapbox.js')
+	//- Above -> Integrating a MAP that displays all the stops/locations of a specific/certain tour on a specific tour detail page in website
+	//-Contd.. USING MAPBOX
+	//-This is RECENT Comment after installing and using parcel-> Now remember way back when we actually created this map and remember how it asked us if we wanted to use the mapbox library on npm(ie by installing this mapbox library/package through npm in terminal and then requiring/importing it)? So we could now go ahead and actually use that one(ie by installing this mapbox library/package through npm in terminal and then requiring/importing it) instead of this one(ie above-> script(src= 'https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js') ) that we're using right now . However, for some reason there's a problem with using this library(ie by installing this mapbox library/package through npm in terminal and then requiring/importing it) together with Parcel, okay. So other people actually run into this issue. So we cannot use the mapbox npm library together with Parcel package. So that's the reason why I'm still doing it like this(ie above-> script(src= 'https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js'))
+
+//-DEFINING MIXIN BELOW
+//-Below overviewBox-> name of the mixin; 
+//-DEFINING overviewBox mixin below
+//- mixin -> these are reusable pieces of code that we can pass arguments into, so a bit like f'n
+//-Below-> arguments passed into mixin = variables actually, So label, text and icon = variables
+mixin overviewBox(label, text, icon)
+	.overview-box__detail
+		svg.overview-box__icon
+			use(xlink:href=`/img/icons.svg#icon-${icon}`)
+		span.overview-box__label= label
+		span.overview-box__text= text
+
+
+//- //- DEFINING reviewCard mixin below
+//- //-Below reviewCard-> name of the mixin; reviewCard mixin below
+//- mixin reviewCard(review)
+//- 	.reviews__card
+//- 		.reviews__avatar
+//- 		//- Below-> review.user.name = user's name who wrote this review for this specific tour
+//- 			img.reviews__avatar-img(src=`/img/users/${review.user.photo}`, alt=`${review.user.name}`)
+//- 			h6.reviews__user= `${review.user.name}`
+//- 		//-Just below is review description/text
+//- 		p.reviews__text= review.review 
+//- 		//- Below-> to display the actual rating in webpage, and so we have to display one of the below commented elements here for each of the no of stars that the review/rating has.
+//- 		//-contd.. So a five-star reviews need all of the five stars' code commented below But a four-star review only needs four of them(ie 4 stars) and then plus that we also want a grey star so basically to say 4 out of 5
+//- 		//-contd.. So what we're gonna do below is-> to print the amount of stars in a loop and coz there are five possible stars and so we loop from one to five. Then in each star we test if the tour rating is higher or equal to the current star and if so, we print a green star which stands for actual star and if not, it is a gray star which is actually an in-existent star for e.g. to show 3 out of 5
+//- 		//-contd.. And the difference b/w a green star and a gray star is that the green has the active modifier here(in below commented code-> svg.reviews__star.reviews__star--active) and the gray star has it set as inactive(in below commented code-> svg.reviews__star.reviews__star--inactive) and so we will change that(ie active to inactive in gray star) with a template string
+//- 		each star in [1, 2, 3, 4, 5]
+//- 			//- Below e.g.-> lets say we have 3 stars out of 5 (ie 3/5 rating) , so in 1st iteration, star is 1 and this 1 is less than 3 and so the 1st star should be a green star and so thats y we put out here 'active' vch will then result in 'reviews__star--active' code And then the same process with the 2nd and 3rd star defined in above loop's array, and So at that/this point we have three green stars but the 4th and 5th one shud be gray and so in the 4th iteration of the loop, star = 4 and So the test(ie test of testing-> review.rating(3 here now) >= star(4 here now)) is 3 >= 4 which is false and so it's inactive and so that will then be a gray star and the exact same process for the last(5th) star as the 4th star. 
+//- 			//- below -> review.rating >= star ? 'active' : 'inactive' -> is JS CODE and '?' -> ternary operator -> alternative of if/else ; star -> current star in above loop
+//- 			.reviews__rating
+//- 				svg.reviews__star(class= `reviews__star--${review.rating >= star ? 'active' : 'inactive'}`)
+//- 					use(xlink:href='/img/icons.svg#icon-star')
+//- 				//- Above's Loop ends now/here
+
+//- 		//- Below-> Commented code for stars of reviews/ratings which is created above in loop (ie above in-> each star in [1, 2, 3, 4, 5] )
+//- 		//- .reviews__rating
+//- 		//- 	svg.reviews__star.reviews__star--active
+//- 		//- 		use(xlink:href='/img/icons.svg#icon-star')
+//- 		//- 	svg.reviews__star.reviews__star--active
+//- 		//- 		use(xlink:href='/img/icons.svg#icon-star')
+//- 		//- 	svg.reviews__star.reviews__star--active
+//- 		//- 		use(xlink:href='/img/icons.svg#icon-star')
+//- 		//- 	svg.reviews__star.reviews__star--active
+//- 		//- 		use(xlink:href='/img/icons.svg#icon-star')
+//- 		//- 	svg.reviews__star.reviews__star--active
+//- 		//- 		use(xlink:href='/img/icons.svg#icon-star')
+
+
+
+
+
+
+
+
+block content
+
+
+	section.section-header
+		.header__hero
+			.header__hero-overlay &nbsp;
+			img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+
+		.heading-box
+			h1.heading-primary
+				span= `${tour.name} tour`
+			.heading-box__group
+				.heading-box__detail
+					svg.heading-box__icon
+						use(xlink:href='/img/icons.svg#icon-clock')
+					span.heading-box__text= `${tour.duration} days`
+				.heading-box__detail
+					svg.heading-box__icon
+						use(xlink:href='/img/icons.svg#icon-map-pin')
+					span.heading-box__text= tour.startLocation.description
+
+	section.section-description
+		.overview-box
+			div
+				.overview-box__group
+					h2.heading-secondary.ma-bt-lg Quick facts
+					//- MIXINS -> these are reusable pieces of code that we can pass arguments into, so a bit like f'n
+					//-below-> USING MIXIN by using '+' sign
+
+					//-below-> Using overviewBox mixin(defined at top in this file) below by using '+' sign
+					//- +overviewBox('Next date', 'August 2021', 'calendar') <- this code is equal to just below commented code
+
+					//- .overview-box__detail
+					//- 	svg.overview-box__icon
+					//- 		use(xlink:href='/img/icons.svg#icon-calendar')
+					//- 	span.overview-box__label Next date
+					//- 	span.overview-box__text August 2021
+
+					//-Below we used '-' to create JS (which is-> const date = ... here below in this case) CODE that is not going to produce any o/p 
+					- const date = tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+
+					//-below-> Using overviewBox mixin(defined at top in this file) by using '+' sign
+					+overviewBox('Next date', date, 'calendar')
+
+					//- In below mixins, the tour variable comes from viewsController.getTour in code-> res.status... so there in viewsController.getTour we passed tour and title variables/locals into this tour.pug file.
+					//- contd.. And So these two variables (ie tour and title) that we passed there in viewsController.getTour into this tour.pug file and so these variables ARE AVAILABLE TO USE ANYWHERE IN THIS tour.pug file  
+					+overviewBox('Difficulty', tour.difficulty, 'trending-up')
+					+overviewBox('Participants', `${tour.maxGroupSize} people`, 'user')
+					+overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
+
+
+					//- .overview-box__detail
+					//- 	svg.overview-box__icon
+					//- 		use(xlink:href='/img/icons.svg#icon-trending-up')
+					//- 	span.overview-box__label Difficulty
+					//- 	span.overview-box__text Medium
+
+					//- .overview-box__detail
+					//- 	svg.overview-box__icon
+					//- 		use(xlink:href='/img/icons.svg#icon-user')
+					//- 	span.overview-box__label Participants
+					//- 	span.overview-box__text 10 people
+
+					//- .overview-box__detail
+					//- 	svg.overview-box__icon
+					//- 		use(xlink:href='/img/icons.svg#icon-star')
+					//- 	span.overview-box__label Rating
+					//- 	span.overview-box__text 4.9 / 5
+
+
+
+				.overview-box__group
+					h2.heading-secondary.ma-bt-lg Your tour guides
+
+					//- Below We dont know here below that 'how many tour guides' there actually are on/for 'each tour' and so just like in the overview page, we need to USE LOOP of pug here below to basically loop through all the guides that are associated with a certain tour
+					//- Below-> guide -> name of the variable in current iteration of the loop and so 'each of these guides' here in iteration will basically be a user doc (so each of the guides is a user) ; tour.guides -> array we want to loop through and this tour.guides array will be populated with the corresponding users
+
+					each guide in tour.guides
+						.overview-box__detail
+							img.overview-box__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
+							//-Above's loop ended now/here
+
+							//- Below if() is written using regular unbuffered(ie code that does not produce any o/p) JS CODE implemented using '-' below
+							- if (guide.role === 'lead-guide')
+								span.overview-box__label Lead guide
+
+								- if (guide.role === 'guide')
+								span.overview-box__label Tour guide
+							span.overview-box__text= guide.name
+
+		.description-box
+			h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
+
+			//-Below -> split the string in tours.description in tours.json file(located at /dev-data/data location) by new line character ie by '\n'
+			//- contd.. tour.description = String ; const paragraphs = tour.description.split('\n') = array; So, paragraphs = array of paragraphs where each of the element (p below) in iteration is basically one paragraph of that array
+			//- Below JS code is written using regular unbuffered(ie code that does not produce any o/p) JS CODE implemented using '-' below
+			//- contd.. So, below we are looping through all of the paragraphs in 'paragraphs array' and print their(each of the paragraphs') content below; So below-> p = current paragraph in paragraphs array
+			- const paragraphs = tour.description.split('\n');
+			each p in paragraphs
+				p.description__txt= p
+				//-Above's loop ended now/here
+				//- So above, 'each p in paragraphs' array will be/will produce/create this code in each iteration of loop -> p.description__txt= current paragraph of loop iteration = p 
+
+			//- p.description__text Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+			//- p.description__text Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum!
+
+	section.section-pictures
+		//- Below-> tour.images = array of images in tours.json file(located at /dev-data/data location) and so thus we are looping throgh that tour.images array below
+		//- In a pug loop, we can actually define a second/2nd variable and that 2nd variable is then going to be the index (i below)and i-> zero based index which is going to be zero(0) for the first element of loop iteration and then 1 & 2, etc.. thereafter for the Subsequent/Onwards/other elements of loop iteration, so below $(i + 1) = $(0 + 1) = $(1) coz i = 0 in the first loop iteration and then 1, 2, 3 etc... in the subsequent/next loop iterations respectively
+		each img in tour.images
+			.picture-box
+				img.picture-box__img(src=`/img/tours/${img}`, alt=`The Park Camper Tour ${i + 1}`, class= `picture-box__img--${i + 1}`)
+			//-Above's loop ended now/here
+			//- So above, for 'each img in tour.images' we want to create this code in each iteration of loop -> .picture-box <On Next/below line> img.picture-box__img(src=`/img/tours/${img}`, alt=`The Park Camper Tour ${i + 1}`, class= `picture-box__img--${i + 1}`)
+
+		//- .picture-box
+		//- 	img.picture-box__img.picture-box__img--1(src='/img/tour-5-1.jpg', alt='The Park Camper Tour 1')
+
+
+		//- .picture-box
+		//- 	img.picture-box__img.picture-box__img--2(src='/img/tour-5-2.jpg', alt='The Park Camper Tour 1')
+		//- .picture-box
+		//- 	img.picture-box__img.picture-box__img--3(src='/img/tour-5-3.jpg', alt='The Park Camper Tour 1')
+
+	//-part of below comments are from mapbox.js file and below comments are true here below only and in mapbox.js file, we wrote these below comments for understanding concept
+	//-..contd And so as in tour.pug/tour template we already have all the data about the tour itself (coz we have access to 'tour' variable in entire tour.pug file) and so now we can simply put that tour data into our HTML so that the JS can then read it from there. 
+	//-..contd So basically we are gonna expose the location data ri8 here as a string in the HTML and then our JS will then pick it up from there w/o having to do any API call 
+	//-..contd so the section below already has a <div> element with a map class ; # = Id
+	//-..contd and so below we want to specify a data attribute by specifying a data attribute(data-locations below) below in HTML and then read that attribute using JS
+	//-..contd Below code-> "#map(data-'whatever we want to call this data attribute('locations here below')') " ; tour.locations = array, but in html we can not have arrays or objects and so we convert tour.locations array into a string by using JSON.stringify below
+	//-..contd And so now in mapbox.js file, we can get that very easily in code-> 'const locations = ...' in mapbox.js file
+	//- See 'Including a map with mapbox part-1 in section 12' vdo for more details
+	//- And whatever we put into a data-attribute(ie into data-locations below), will then get stored into the dataset property and in this case dataset.locations coz its called data-'locations' and we used this dataset.locations in mapbox.js file in code-> 'const locations = ...'
+	section.section-map
+		#map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+	section.section-reviews
+		.reviews
+			//- Below -> pug loop for looping through array of reviews; tour.reviews = array
+			each review in tour.reviews
+				//-Below -> CALLING the reviewCard MIXIN here below (BY USING '+' SIGN) in each iteration of the loop ; review -> current review in iteration of the loop in below's code -> +reviewCard(review) and in above's code -> each review in tour.reviews
+				+reviewCard(review)
+				//- Above's loop ends now/here
+
+			.reviews__card
+				.reviews__avatar
+					img.reviews__avatar-img(src='/img/users/user-7.jpg', alt='Jim Brown')
+					h6.reviews__user Jim Brown
+				p.reviews__text Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque dignissimos sint quo commodi corrupti accusantium veniam saepe numquam.
+				.reviews__rating
+					svg.reviews__star.reviews__star--active
+						use(xlink:href='/img/icons.svg#icon-star')
+					svg.reviews__star.reviews__star--active
+						use(xlink:href='/img/icons.svg#icon-star')
+					svg.reviews__star.reviews__star--active
+						use(xlink:href='/img/icons.svg#icon-star')
+					svg.reviews__star.reviews__star--active
+						use(xlink:href='/img/icons.svg#icon-star')
+					svg.reviews__star.reviews__star--active
+						use(xlink:href='/img/icons.svg#icon-star')
+
+	section.section-cta
+		.cta
+			.cta__img.cta__img--logo
+				img(src='/img/logo-white.png', alt='Natours logo')
+			//- Below-> tour.images = array
+			img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
+			img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+			.cta__content
+				h2.heading-secondary What are you waiting for?
+				p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+
+				if user
+					button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+				else
+					a.btn.btn--green.span-all-rows(href='/login') Log-in to book tour
+
+
+				
